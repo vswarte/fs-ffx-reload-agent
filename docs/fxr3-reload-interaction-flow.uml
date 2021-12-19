@@ -1,0 +1,115 @@
+@startuml
+
+title "FXR reloader interaction flow"
+
+actor User
+participant "Client (C#)" as Client
+participant "Reload Agent (C++)" as RA
+participant Game
+
+== Initialization ==
+
+rnote over Client
+    Initialization only happens when there
+    is no existing connection to the agents RPC.
+    When connection is lost (ex. editor crash) the
+    agent will unload itself completely thus allowing
+    for complete reinvocation of this flow.
+endrnote
+
+User -> Client : Click "Connect to game"
+Client -> Game : Call LoadLibraryA with agent DLL
+activate Client
+activate Game
+Game -> RA : Attach
+Game -> Client : DllMain result
+deactivate Client
+deactivate Game
+alt Agent not injected (DllMain result fail)
+    Client -> User : "Could not inject agent"
+    hnote over Client #red
+        Quit flow
+    endhnote
+else Agent was injected (DllMain result OK)
+    Client -> RA : Connect to RPC server
+    alt Agent not connected (Connection fail)
+        Client -> User : "Agent failed connecting"
+      hnote over Client #red
+          Quit flow
+      endhnote
+    else Agent did connect
+        RA -> Client : Accept RPC connection
+        Client -> User : "Agent connected"
+    end
+end
+
+rnote over Client
+    The next parts in the flow require an established connection to the agent's RPC server
+endrnote
+
+== FFX exchange ==
+User -> Client : Click "Reload FXR"
+activate Client
+Client -> RA : PATCH <FFX filesize> <FFX file>
+activate RA
+RA <-> Game : FFX patchable state (memory sanity checks)
+alt Game state not in a patchable state
+    RA -> Client : State not OK
+    Client -> User : "Game not in a patchable state"
+else Game is in a patchable state
+    RA -> RA : Enqueue FFX to be patched
+    RA -> Client : OK (Enqueued FFX)
+    deactivate RA
+    Client -> User : "FXR enqueued for patching"
+    deactivate Client
+end
+
+
+== FFX read hook invocation ==
+hnote over Game
+    The game will trigger a hook when reading an FFX.
+    This hook will do the actual patching to avoid
+    read-while-write issues.
+endhnote
+
+activate RA
+Game -> RA : Invoke hook
+RA -> Game : Patch in queued FFXs
+RA -> RA : Enqueue updated FFX for success notification
+deactivate RA
+
+== FFX patch success notification ==
+hnote over RA
+    This queue was put here to avoid dealing with the
+    complications of the RPC transport from inside of
+    the game thread.
+endhnote
+
+RA -> RA : Is success notification item enqueued?
+RA -> Client : PATCHED <FFXID>
+Client -> User : "Successfully patched <FFXID>"
+
+== Shutdown (user initiated) ==
+User -> Client : Click "Disconnect from game"
+activate Client
+Client -> RA : SHUTDOWN
+activate RA
+RA -> Game : FreeLibrary
+deactivate RA
+activate Game
+Game -> RA : Detach
+deactivate Game
+activate RA
+RA -> Client : BYE
+deactivate RA
+Client -> User : "Agent stopped"
+deactivate Client
+
+== Shutdown (loss of connection to client) ==
+Client -> User : "Lost connection lmao"
+RA -> Game : FreeLibrary
+activate Game
+Game -> RA : Detach
+deactivate Game
+
+@enduml

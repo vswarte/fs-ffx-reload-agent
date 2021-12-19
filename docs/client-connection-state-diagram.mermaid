@@ -1,0 +1,8 @@
+stateDiagram-v2
+    [*] --> PendingConnection : Initialization
+    PendingConnection --> Connected : Client connects to server
+    PendingConnection --> Errored : Client couldn't connect to server
+    Connected --> Completed : Client sends SHUTDOWN message
+    Connected --> Errored : Transport error
+    Completed --> [*]
+    Errored --> [*]

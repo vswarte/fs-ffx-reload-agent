@@ -1,0 +1,7 @@
+stateDiagram-v2
+    [*] --> AwaitingConnection : Initialization
+    AwaitingConnection --> Connected : Client connects within timeout
+    AwaitingConnection --> [*] : Client does not connect within timeout
+    Connected --> ShuttingDown : Client invoked shutdown
+    Connected --> ShuttingDown : Server loses connection to client
+    ShuttingDown --> [*] : Client is disconnected and RPC can no longer be used
