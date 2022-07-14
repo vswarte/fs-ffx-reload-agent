@@ -33,50 +33,52 @@ struct FXRRoot {
 };
 
 struct FXRWrapper {
-    FXRRoot* fxr;
-    uint64_t unk;
+    FXRRoot* fxr; // 0x0
+    uint64_t unk; // 0x8
 };
 
 struct FXRListNode {
-    FXRListNode* next;
-    FXRListNode* prev;
-    uint64_t hash;
-    FXRWrapper* fxrw;
+    FXRListNode* next; // 0x0
+    FXRListNode* prev; // 0x8
+    uint64_t hash; // 0x10
+    FXRWrapper* fxrw; // 0x18
     void* unk20; // 0x20
 };
 
 struct FXRList {
-    FXRListNode* head;
-    FXRListNode* tail;
-    void* unk10;
+    FXRListNode* head; // 0x0
+    FXRListNode* tail; // 0x8
+    void* unk10; // 0x10
 };
 
 struct FXRResourceContainer {
-    void* allocator;
-    void* sceneCtrl;
-    FXRList* fxrList;
-    uint64_t resCount;
+    void* allocator1; // 0x0
+    void* sceneCtrl; // 0x8
+    void* unk10; // 0x10
+    void* allocator2; // 0x18
+    FXRList* fxrList; // 0x20
+    uint64_t resCount; // 0x28
 };
 
 struct GXFfxGraphicsResourceManager {
-    void* vftable; // 0x00
-    char unk[0x158]; // 0x08
+    void* vftable; // 0x0
+    char unk[0x158]; // 0x8
     FXRResourceContainer* resContainer; // 0x160
 };
 
 struct GXFfxSceneCtrl {
-    void* vftable; // 0x00
-    void* sgEntity; // 0x08
+    void* vftable; // 0x0
+    void* sgEntity; // 0x8
     void* allocator; // 0x10
     void* ffxManager; // 0x18
     uint64_t unk; // 0x20
     GXFfxGraphicsResourceManager* graphicsResourceManager; // 0x28
 };
 
-struct SprjSfxImp {
+struct CSSfxImp {
     void* vftable; // 0x0
-    char unk[0x50]; // 0x8
-    GXFfxSceneCtrl* sceneCtrl; // 0x58
+    char unk[0x58]; // 0x8
+    GXFfxSceneCtrl* sceneCtrl; // 0x60
 };
 
 typedef void* (*PatchFxrPointers)(void*, void*, void*);
@@ -85,5 +87,5 @@ typedef void* (*GetFxrArchive)();
 typedef void* (*FxrAlloc)(void *, int, int);
 
 void reload_fxr(int fxrId, char *buffer, int length);
-void swap_fxr_entry(FXRWrapper* wrapper, char *buffer, int length);
-bool sanity_checks();
+void swap_fxr_entry(uintptr_t baseAddress, FXRWrapper* wrapper, char *buffer, int length);
+bool sanity_checks(CSSfxImp* sfxImpPtr);
