@@ -1,22 +1,3 @@
-# Changes that need to be done for ER support
- - [x] Replace pointers
-   - [x] Pointers
-     - [x] PatchFxrPointers (offset 0x2059160)
-     - [x] WtfFxr (offset 0x2082270)
-     - [x] GetFxrAllocator (offset 0x2014bd0)
-     - [x] CSSfxImp (offset 0x3c81ba8)
-   - [x] Fix structures
- - [ ] Upgrade to 1.05.0
-    - [ ] Replace pointers
-    - [ ] Method pointers
-        - [ ] PatchFxrPointers
-        - [ ] WtfFxr
-        - [ ] GetFxrAllocator
-        - [ ] CSSfxImp
-    - [ ] Fix structures
- - [x] Testing this garbage (1.03.2)
- - [ ] Testing this garbage (1.05.0)
-
 ## Changes to method pointers
 
 DS3
@@ -27,12 +8,21 @@ GetFxrAllocator fpGetFxrAllocator = (GetFxrAllocator) 0x14025ed90;
 SprjSfxImp** CSSfxImp = (SprjSfxImp**) 0x1447843c8;
 ```
 
-ER 1.3.2.0
+ER 1.03.2
 ```c++
-PatchFxrPointers fpPatchFxrPointers = (PatchFxrPointers) BaseAddress + 0x2059160;
-WtfFxr fpWtfFxr = (WtfFxr) BaseAddress + 0x2082270;
-GetFxrAllocator fpGetFxrAllocator = (GetFxrAllocator) BaseAddress + 0x2014bd0;
-SprjSfxImp** CSSfxImp = (SprjSfxImp**) BaseAddress + 0x3c81ba8;
+
+int offsetPatchFxrPointers = 0x2059160;
+int offsetWtfFxr = 0x2082270;
+int offsetGetFxrAllocator = 0x2014bd0;
+int offsetCSSfxImpPtr = 0x3c81ba8;
+```
+
+ER 1.05.0
+```c++
+int offsetPatchFxrPointers = 0x204ef40;
+int offsetWtfFxr = 0x2078050;
+int offsetGetFxrAllocator = 0x200a9b0;
+int offsetCSSfxImpPtr = 0x3c3cb48;
 ```
 
 ## Structures
@@ -87,7 +77,7 @@ struct SprjSfxImp {
 };
 ```
 
-ER 1.3.2.0
+ER 1.03.2/1.05.0
 ```c++
 struct FXRWrapper {
     FXRRoot* fxr; // 0x0

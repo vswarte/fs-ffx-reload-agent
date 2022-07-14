@@ -1,10 +1,10 @@
 #include "fxr.h"
 #include "logging.h"
 
-int offsetPatchFxrPointers = 0x2059160;
-int offsetWtfFxr = 0x2082270;
-int offsetGetFxrAllocator = 0x2014bd0;
-int offsetCSSfxImpPtr = 0x3c81ba8;
+int offsetPatchFxrPointers = 0x204ef40;
+int offsetWtfFxr = 0x2078050;
+int offsetGetFxrAllocator = 0x200a9b0;
+int offsetCSSfxImpPtr = 0x3c3cb48;
 
 void reload_fxr(int fxrId, char *buffer, int length) {
     auto baseAddress = (uintptr_t) GetModuleHandleA("eldenring.exe");
@@ -39,15 +39,16 @@ void swap_fxr_entry(uintptr_t baseAddress, FXRWrapper* wrapper, char *buffer, in
     auto fpWtfFxr = (WtfFxr) (baseAddress + offsetWtfFxr);
     auto fpGetFxrAllocator = (GetFxrAllocator) (baseAddress + offsetGetFxrAllocator);
 
-    void *fxrArchive = fpGetFxrAllocator();
-    FxrAlloc fxrAlloc = (*(FxrAlloc**)(fxrArchive))[10];
+    void *fxrAllocator = fpGetFxrAllocator();
+    FxrAlloc fxrAlloc = (*(FxrAlloc**)(fxrAllocator))[10];
 
-    void *fxrData = fxrAlloc(fxrArchive, length, 0x10);
+    void *fxrData = fxrAlloc(fxrAllocator, length, 0x10);
     memcpy(fxrData, buffer, length);
 
     fpPatchFxrPointers(fxrData, fxrData, fxrData);
     fpWtfFxr(fxrData);
     wrapper->fxr = (FXRRoot*) fxrData;
+    logging::write_line("Replaced FXR");
 }
 
 bool sanity_checks(CSSfxImp* sfxImpPtr) {
