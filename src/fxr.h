@@ -83,7 +83,7 @@ struct CSSfxImp {
 
 typedef void* (*PatchFxrPointers)(void*, void*, void*);
 typedef void* (*WtfFxr)(void*);
-typedef void* (*GetFxrArchive)();
+typedef void* (*GetFxrAllocator)();
 typedef void* (*FxrAlloc)(void *, int, int);
 
 void reload_fxr(int fxrId, char *buffer, int length);

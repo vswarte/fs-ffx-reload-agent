@@ -35,11 +35,11 @@ void reload_fxr(int fxrId, char *buffer, int length) {
 }
 
 void swap_fxr_entry(uintptr_t baseAddress, FXRWrapper* wrapper, char *buffer, int length) {
-    auto fpPatchFxrPointers = (PatchFxrPointers) (baseAddress + 0x2059160);
-    auto fpWtfFxr = (WtfFxr) (baseAddress + 0x2082270);
-    auto fpGetFxrGlobal = (GetFxrArchive) (baseAddress + 0x2014bd0);
+    auto fpPatchFxrPointers = (PatchFxrPointers) (baseAddress + offsetPatchFxrPointers);
+    auto fpWtfFxr = (WtfFxr) (baseAddress + offsetWtfFxr);
+    auto fpGetFxrAllocator = (GetFxrAllocator) (baseAddress + offsetGetFxrAllocator);
 
-    void *fxrArchive = fpGetFxrGlobal();
+    void *fxrArchive = fpGetFxrAllocator();
     FxrAlloc fxrAlloc = (*(FxrAlloc**)(fxrArchive))[10];
 
     void *fxrData = fxrAlloc(fxrArchive, length, 0x10);
