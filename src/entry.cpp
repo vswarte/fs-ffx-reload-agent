@@ -31,7 +31,7 @@ void detach() {
 DWORD main_thread(void *lpParam) {
     logging::write_line("Spinning up main thread");
 
-    auto server = tcp_server();
+    auto server = pipe_server();
     server.setup();
     server.run();
     server.cleanup();
