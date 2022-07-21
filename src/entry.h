@@ -6,7 +6,9 @@
 
 #include <windows.h>
 #include "logging.h"
-#include "tcp_server.h"
+#include "pipe_server.h"
+
+#define EXCEPTION_STRING_SIZE    1024
 
 void attach();
 void detach();

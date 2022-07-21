@@ -10,8 +10,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG=2")
 set(SOURCES
         src/entry.cpp src/entry.h
         src/logging.cpp src/logging.h
-        src/tcp_server.cpp src/tcp_server.h
-        src/packets.cpp src/packets.h src/fxr.cpp src/fxr.h)
+        src/packets.cpp src/packets.h
+        src/fxr.cpp src/fxr.h
+        src/pipe_server.cpp src/pipe_server.h
+)
 
 include_directories(src)
 
