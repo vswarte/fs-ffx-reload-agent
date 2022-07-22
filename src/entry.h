@@ -13,5 +13,6 @@
 void attach();
 void detach();
 
+HMODULE current_module;
 DWORD WINAPI main_thread(void *lpParam);
 LONG WINAPI exception_handler(struct _EXCEPTION_POINTERS*);

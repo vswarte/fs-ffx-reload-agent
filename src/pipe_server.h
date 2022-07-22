@@ -14,10 +14,12 @@ public:
     void setup();
     void run();
     void cleanup();
+    void status_thread();
 
 private:
     HANDLE _pipe;
 
     void handle_packet(char buffer[RECEIVE_BUFFER_LENGTH], int length);
     void handle_fxr_packet(char buffer[RECEIVE_BUFFER_LENGTH], int length);
+    void send_operation_status(int fxrId, FxrDataResultStatus status);
 };

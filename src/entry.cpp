@@ -1,6 +1,6 @@
 #include "entry.h"
 
-BOOL WINAPI DllMain(HINSTANCE baseAddress, DWORD reason, BOOL isStatic) {
+BOOL WINAPI DllMain(HMODULE module, DWORD reason, BOOL isStatic) {
     switch (reason) {
         case DLL_PROCESS_ATTACH:
             attach();
@@ -26,6 +26,7 @@ void attach() {
 void detach() {
     logging::write_line("Detaching FXR reloader agent");
     logging::deinit();
+    FreeLibraryAndExitThread(current_module, 0);
 }
 
 DWORD main_thread(void *lpParam) {
