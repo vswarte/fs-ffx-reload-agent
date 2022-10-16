@@ -1,10 +1,10 @@
 #include "fxr.h"
 #include "logging.h"
 
-int offsetPatchFxrPointers = 0x204ef40;
-int offsetWtfFxr = 0x2078050;
-int offsetGetFxrAllocator = 0x200a9b0;
-int offsetCSSfxImpPtr = 0x3c3cb48;
+int offsetPatchFxrPointers = 0x2066670;
+int offsetWtfFxr = 0x208f780;
+int offsetGetFxrAllocator = 0x20220e0;
+int offsetCSSfxImpPtr = 0x3c68768;
 
 void reload_fxr(int fxrId, char *buffer, int length) {
     auto baseAddress = (uintptr_t) GetModuleHandleA("eldenring.exe");
